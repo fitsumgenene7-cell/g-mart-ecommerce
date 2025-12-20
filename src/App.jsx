@@ -1,12 +1,18 @@
-import './App.css';
+// import './App.css';
+import Header from './components/layouts/Header.jsx';
+import HeroSection from './components/store/heroSection.jsx';
+
+import './index.css'
 
 function App() {
   return (
-    <div className = "app">
-      <h1>Welcome to G-Mart</h1>
-      <h2>An e-commerce website where you can achieve what you want.</h2>
+    
+    <>
+      <Header />
+      <HeroSection />
+    </>
 
-    </div>
+    
   )
 }
 
