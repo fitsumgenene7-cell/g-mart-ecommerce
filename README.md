@@ -34,5 +34,3 @@ It provides a smooth shopping experience with fast performance, clean UI, and sc
 - Autoprefixer
 
 ---
-
-## 📁 Project Structure
