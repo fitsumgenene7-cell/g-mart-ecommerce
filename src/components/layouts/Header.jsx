@@ -1,3 +1,4 @@
+
 const PromoBanner = () => (
   <div className="bg-black text-white text-center text-sm py-2">
     <p className="max-w-7xl mx-auto px-6">An ecommerce website where customers can shop for products and manage their orders.</p>
@@ -8,7 +9,7 @@ const NavBar = () => (
   <nav className="bg-white shadow-sm rounded-sm">
     <div className="max-w-7xl mx-auto px-6 flex items-center justify-between py-4">
       <div className="flex items-center gap-6">
-        <a href="/" className="text-2xl font-semibold text-slate-900">G-mart</a>
+        <a href="/" className="text-4xl font-bold text-slate-900">G-mart</a>
       </div>
 
       <ul className="hidden md:flex items-center gap-12 text-sm text-slate-600">
