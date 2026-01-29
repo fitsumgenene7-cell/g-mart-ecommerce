@@ -1,49 +1,96 @@
+import React from "react";
+import { ChevronDown, Search, User, Heart, ShoppingBag } from "lucide-react";
 
-const PromoBanner = () => (
-  <div className="bg-black text-white text-center text-sm py-2">
-    <p className="max-w-7xl mx-auto px-6">An ecommerce website where customers can shop for products and manage their orders.</p>
-  </div>
-);
+const navLinks = [
+  { name: "Shop", id: "products", hasDropdown: true },
+  { name: "Categories", id: "categories", hasDropdown: true },
+  { name: "About Us", id: "about" },
+  { name: "Contact", id: "contact" },
+];
 
-const NavBar = () => (
-  <nav className="bg-white shadow-sm rounded-sm">
-    <div className="max-w-7xl mx-auto px-6 flex items-center justify-between py-4">
-      <div className="flex items-center gap-6">
-        <a href="/" className="text-4xl font-bold text-slate-900">G-mart</a>
+const Header = () => {
+  // Smooth scroll function
+  const handleScroll = (id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  return (
+    <header className="sticky top-0 z-50">
+      {/* Promo Bar */}
+      <div className="bg-black text-white text-center py-2.5 text-sm font-medium">
+        All you need in one place, welcome to G-mart
       </div>
 
-      <ul className="hidden md:flex items-center gap-12 text-sm text-slate-600">
-        <li>
-          <a href="/" className="hover:text-blue-500 p-6 transition">Shop</a>
-        </li>
-        <li>
-          <a href="/about" className="hover:text-blue-500 p-6 transition">About</a>
-        </li>
-        <li>
-          <a href="/categories" className="hover:text-blue-500 p-6transition">Categories</a>
-        </li>
-        <li>
-          <a href="/contact" className="hover:text-blue-500 p-6 transition">Contact</a>
-        </li>
-      </ul>
+      {/* Navbar */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="container mx-auto px-4 flex items-center justify-between h-16 lg:h-20">
+          {/* Logo */}
+          <a href="/" className="text-2xl lg:text-3xl font-extrabold tracking-tight text-gray-800">
+            G-mart
+          </a>
 
-      <div className="flex items-center gap-6">
-        <button aria-label="Search" className="p-2 rounded-md text-slate-600 hover:bg-slate-100 transition">🔍</button>
-        <button aria-label="Account" className="p-2 rounded-md text-slate-600 hover:bg-slate-100 transition">👤</button>
-        <a href="/cart" className="relative inline-flex items-center p-2 rounded-md text-slate-600 hover:bg-slate-100 transition">
-          🛒
-          <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">2</span>
-        </a>
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <button
+                key={link.name}
+                onClick={() => handleScroll(link.id)}
+                className="text-sm font-semibold text-gray-700 hover:text-blue-500 flex items-center gap-1"
+              >
+                {link.name}
+                {link.hasDropdown && <ChevronDown size={14} />}
+              </button>
+            ))}
+          </nav>
+
+          {/* Actions */}
+          <div className="hidden lg:flex items-center gap-4">
+            {/* Search button */}
+            <button
+              className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
+              aria-label="Search"
+            >
+              <Search size={20} />
+            </button>
+
+            {/* User */}
+            <button className="p-2 text-gray-800 hover:bg-gray-100 rounded transition" aria-label="Account">
+              <User size={20} />
+            </button>
+
+            {/* Wishlist */}
+            <button className="p-2 text-gray-800 hover:bg-gray-100 rounded transition" aria-label="Wishlist">
+              <Heart size={20} />
+            </button>
+
+            {/* Cart */}
+            <button className="p-2 text-gray-800 hover:bg-gray-100 rounded transition" aria-label="Cart">
+              <ShoppingBag size={20} />
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu (always visible, static) */}
+        <div className="lg:hidden bg-white border-t border-gray-200">
+          <nav className="container mx-auto px-4 py-4 flex flex-col gap-1">
+            {navLinks.map((link) => (
+              <button
+                key={link.name}
+                onClick={() => handleScroll(link.id)}
+                className="text-base font-semibold text-gray-800 py-3 px-2 hover:bg-blue-50 rounded flex items-center justify-between"
+              >
+                {link.name}
+                {link.hasDropdown && <ChevronDown size={16} />}
+              </button>
+            ))}
+          </nav>
+        </div>
       </div>
-    </div>
-  </nav>
-);
-
-const Header = () => (
-  <header className="w-full">
-    <PromoBanner />
-    <NavBar />
-  </header>
-);
+    </header>
+  );
+};
 
 export default Header;

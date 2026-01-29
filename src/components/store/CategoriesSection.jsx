@@ -1,9 +1,6 @@
-
-
-
 const CategoriesSection = () => {
     return (
-        <section className ="py-16 bg-background lg:py-24">
+        <section id="categories" className ="py-16 bg-background lg:py-24">
             <div className = "container mx-auto px-4">
                 
             <div className ="text-center mb-12">
@@ -17,7 +14,6 @@ const CategoriesSection = () => {
 
 
             </div>
-          
         </section>
     )
 }
