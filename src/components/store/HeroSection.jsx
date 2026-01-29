@@ -1,5 +1,5 @@
 import heroImage from "../../assets/hero.jpeg";
-
+// import "components/common/Button.jsx"
 const HeroSection = () => {
   return (
     <section className="w-full m-0 p-0">
@@ -10,6 +10,8 @@ const HeroSection = () => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           height: '800px', // adjust based on your design
+          margin: 0,
+          padding: 0
         }}
       >
         {/* Dark overlay for better text readability */}
@@ -18,17 +20,20 @@ const HeroSection = () => {
         {/* Main content container */}
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-xl text-left text-white">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font font-inter font-montserrat leading-tight mb-6">
               Discover Our<br />
               <span className="font-bold">Latest Collection</span>
             </h1>
             
+            {/* Description text */}
             <p className="text-lg mb-8 opacity-90 leading-relaxed max-w-md">
               Shop premium quality products at
               <br />
               unbeatable prices.
             </p>
-
+            
+            {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-6">
               <a
                 href="/shop"
@@ -43,6 +48,9 @@ const HeroSection = () => {
                 EXPLORE CATEGORIES
               </a>
             </div>
+            
+          
+            
           </div>
         </div>
       </div>
