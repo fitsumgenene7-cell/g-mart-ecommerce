@@ -33,10 +33,10 @@ const CategoriesSection = () => {
         <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900 font-montserrat">
             Shop by Category
             </h2>
-            <p className="text-gray-600 max-w-md mx-auto">
+            <p className="text-gray-400 max-w-md mx-auto font-montserrat">
             Browse our curated collections and find exactly what you're looking for
             </p>
         </div>

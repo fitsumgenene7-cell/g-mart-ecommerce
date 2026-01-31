@@ -1,7 +1,8 @@
 // import './App.css';
-import Header from './components/layouts/Header.jsx';
-import HeroSection from './components/store/heroSection.jsx';
-import CategoriesSection from './components/store/CategoriesSection.jsx';
+import Header from './components/layouts/Header.jsx'
+import HeroSection from './components/store/Hero.jsx'
+import CategoriesSection from './components/store/Categories.jsx'
+import Products from './components/store/Products.jsx'
 
 import './index.css'
 
@@ -12,6 +13,7 @@ function App() {
       <Header />
       <HeroSection />
       <CategoriesSection />
+      <Products />
     </>
 
     

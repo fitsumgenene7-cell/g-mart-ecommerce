@@ -21,13 +21,13 @@ const HeroSection = () => {
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-xl text-left text-white">
             
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font font-inter font-montserrat leading-tight mb-6">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font-montserrat leading-tight mb-6">
               Discover Our<br />
-              <span className="font-bold">Latest Collection</span>
+              <span className="font-bold font-montserrat">Latest Collection</span>
             </h1>
             
             {/* Description text */}
-            <p className="text-lg mb-8 opacity-90 leading-relaxed max-w-md">
+            <p className="text-lg mb-8 opacity-90 leading-relaxed max-w-md font-montserrat">
               Shop premium quality products at
               <br />
               unbeatable prices.

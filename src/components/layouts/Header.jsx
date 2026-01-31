@@ -1,4 +1,3 @@
-import React from "react";
 import { ChevronDown, Search, User, Heart, ShoppingBag } from "lucide-react";
 
 const navLinks = [
@@ -21,7 +20,7 @@ const Header = () => {
     <header className="sticky top-0 z-50">
       {/* Promo Bar */}
       <div className="bg-black text-white text-center py-2.5 text-sm font-medium">
-        All you need in one place, welcome to G-mart
+        All you need in one place, welcome to G-mart.
       </div>
 
       {/* Navbar */}
