@@ -12,30 +12,26 @@ const HeroSection = () => {
   return (
     <section className="w-full m-0 p-0">
       <div
-        className="w-full relative flex items-center justify-center"
+        className="w-full relative flex items-center bg-cover bg-center min-h-[clamp(520px,80vh,820px)]"
         style={{
           backgroundImage: `url(${heroImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          height: '800px', // adjust based on your design
-          margin: 0,
-          padding: 0
+          backgroundPosition: "center",
         }}
       >
         {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="absolute inset-0 bg-black/25"></div>
 
         {/* Main content container */}
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
           <div className="max-w-xl text-left text-white">
             
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font-montserrat leading-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-montserrat leading-tight mb-6">
               Discover Our<br />
               <span className="font-bold font-montserrat">Latest Collection</span>
             </h1>
             
             {/* Description text */}
-            <p className="text-lg mb-8 opacity-90 leading-relaxed max-w-md font-montserrat">
+            <p className="text-base sm:text-lg mb-8 opacity-90 leading-relaxed max-w-md font-montserrat">
               Shop premium quality products at
               <br />
               unbeatable prices.
