@@ -1,4 +1,21 @@
-import { ChevronDown, Search, User, Heart, ShoppingBag } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown, Search, User, Heart, ShoppingBag, Menu, X } from "lucide-react";
+
+const CATEGORIES_FOR_SEARCH = [
+  { id: "categories", name: "Categories", description: "Browse all categories" },
+  { id: "mens", name: "Men's", description: "Shop the collection" },
+  { id: "womens", name: "Women's", description: "Shop the collection" },
+  { id: "accessories", name: "Accessories", description: "Shop the collection" },
+  { id: "sale", name: "Sale", description: "Up to 50% off" },
+];
+
+const PRODUCTS_FOR_SEARCH = [
+  { id: "products", name: "Featured Products", category: "Products" },
+  { id: "p1", name: "Classic White Sneakers", category: "Footwear" },
+  { id: "p2", name: "Minimal Leather Backpack", category: "Accessories" },
+  { id: "p3", name: "Denim Jacket", category: "Men's" },
+  { id: "p4", name: "Everyday Tote Bag", category: "Women's" },
+];
 
 const navLinks = [
   { name: "Shop", id: "products", hasDropdown: true },
@@ -7,13 +24,106 @@ const navLinks = [
   { name: "Contact", id: "contact" },
 ];
 
-const Header = () => {
+const Header = ({ searchQuery = "", onSearch }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDesktopSearchOpen, setIsDesktopSearchOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState(searchQuery);
+  const searchInputRef = useRef(null);
+
   // Smooth scroll function
   const handleScroll = (id) => {
     const section = document.getElementById(id);
     if (section) {
       section.scrollIntoView({ behavior: "smooth" });
     }
+    setIsMobileMenuOpen(false);
+  };
+
+  const openDesktopSearch = () => {
+    setSearchValue(searchQuery);
+    setIsDesktopSearchOpen(true);
+  };
+
+  const closeDesktopSearch = () => {
+    setIsDesktopSearchOpen(false);
+  };
+
+  const openMobileSearch = () => {
+    setSearchValue(searchQuery);
+    setIsMobileMenuOpen(false);
+    setIsMobileSearchOpen(true);
+  };
+
+  const closeMobileSearch = () => {
+    setIsMobileSearchOpen(false);
+  };
+
+  const submitSearch = (e) => {
+    e.preventDefault();
+    if (typeof onSearch === "function") onSearch(searchValue);
+
+    const productsSection = document.getElementById("products");
+    if (productsSection) {
+      productsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  useEffect(() => {
+    if (!isDesktopSearchOpen && !isMobileSearchOpen) return;
+    const id = window.setTimeout(() => {
+      searchInputRef.current?.focus();
+    }, 0);
+    return () => window.clearTimeout(id);
+  }, [isDesktopSearchOpen, isMobileSearchOpen]);
+
+  useEffect(() => {
+    if (!isDesktopSearchOpen && !isMobileSearchOpen) return;
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        closeDesktopSearch();
+        closeMobileSearch();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isDesktopSearchOpen, isMobileSearchOpen]);
+
+  useEffect(() => {
+    if (!isMobileSearchOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isMobileSearchOpen]);
+
+  const searchText = searchValue.trim().toLowerCase();
+
+  const mobileProductResults = useMemo(() => {
+    if (!searchText) return [];
+    return PRODUCTS_FOR_SEARCH.filter((p) => {
+      const haystack = `${p.name} ${p.category}`.toLowerCase();
+      return haystack.includes(searchText);
+    }).slice(0, 6);
+  }, [searchText]);
+
+  const mobileCategoryResults = useMemo(() => {
+    if (!searchText) return [];
+    return CATEGORIES_FOR_SEARCH.filter((c) => {
+      const haystack = `${c.name} ${c.description}`.toLowerCase();
+      return haystack.includes(searchText);
+    }).slice(0, 6);
+  }, [searchText]);
+
+  const setQuery = (next) => {
+    setSearchValue(next);
+    if (typeof onSearch === "function") onSearch(next);
+  };
+
+  const goToSection = (id) => {
+    const section = document.getElementById(id);
+    if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -25,68 +135,278 @@ const Header = () => {
 
       {/* Navbar */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="container mx-auto px-4 flex items-center justify-between h-16 lg:h-20">
-          {/* Logo */}
-          <a href="/" className="text-2xl lg:text-3xl font-extrabold tracking-tight text-gray-800">
-            G-mart
-          </a>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => (
+        {/* Mobile header (matches screenshot) */}
+        <div className="md:hidden">
+          <div className="container mx-auto px-4 h-16 grid grid-cols-3 items-center">
+            <div className="flex items-center justify-start">
               <button
-                key={link.name}
-                onClick={() => handleScroll(link.id)}
-                className="text-sm font-semibold text-gray-700 hover:text-blue-500 flex items-center gap-1"
+                type="button"
+                className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-nav"
+                onClick={() => {
+                  setIsMobileSearchOpen(false);
+                  setIsMobileMenuOpen((open) => !open);
+                }}
               >
-                {link.name}
-                {link.hasDropdown && <ChevronDown size={14} />}
+                {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
-            ))}
-          </nav>
+            </div>
 
-          {/* Actions */}
-          <div className="hidden lg:flex items-center gap-4">
-            {/* Search button */}
-            <button
-              className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
-              aria-label="Search"
-            >
-              <Search size={20} />
-            </button>
+            <div className="flex items-center justify-center">
+              <a href="/" className="text-2xl font-extrabold tracking-tight text-gray-800">
+                G-mart
+              </a>
+            </div>
 
-            {/* User */}
-            <button className="p-2 text-gray-800 hover:bg-gray-100 rounded transition" aria-label="Account">
-              <User size={20} />
-            </button>
+            <div className="flex items-center justify-end gap-1">
+              <button
+                type="button"
+                className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
+                aria-label="Search"
+                onClick={openMobileSearch}
+              >
+                <Search size={22} />
+              </button>
 
-            {/* Wishlist */}
-            <button className="p-2 text-gray-800 hover:bg-gray-100 rounded transition" aria-label="Wishlist">
-              <Heart size={20} />
-            </button>
-
-            {/* Cart */}
-            <button className="p-2 text-gray-800 hover:bg-gray-100 rounded transition" aria-label="Cart">
-              <ShoppingBag size={20} />
-            </button>
+              <button
+                type="button"
+                className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
+                aria-label="Cart"
+                onClick={() => {
+                  // TODO: open cart UI (drawer)
+                }}
+              >
+                <ShoppingBag size={22} />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Mobile Menu (always visible, static) */}
-        <div className="lg:hidden bg-white border-t border-gray-200">
-          <nav className="container mx-auto px-4 py-4 flex flex-col gap-1">
-            {navLinks.map((link) => (
+        {/* Desktop/tablet header */}
+        <div className="hidden md:block">
+          <div className="container mx-auto px-4 flex items-center justify-between h-16 lg:h-20">
+            <a href="/" className="text-2xl lg:text-3xl font-extrabold tracking-tight text-gray-800">
+              G-mart
+            </a>
+
+            <nav className="hidden md:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <button
+                  key={link.name}
+                  onClick={() => handleScroll(link.id)}
+                  className="text-sm text-gray-600 hover:text-blue-500 flex items-center gap-1"
+                >
+                  {link.name}
+                  {link.hasDropdown && <ChevronDown size={14} />}
+                </button>
+              ))}
+            </nav>
+
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                {isDesktopSearchOpen ? (
+                  <form
+                    onSubmit={submitSearch}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2"
+                  >
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <Search size={18} />
+                      </span>
+                      <input
+                        ref={searchInputRef}
+                        type="search"
+                        placeholder="Search products..."
+                        value={searchValue}
+                        onChange={(e) => setQuery(e.target.value)}
+                        className="w-56 lg:w-72 h-10 pl-10 pr-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        autoFocus
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
+                      onClick={closeDesktopSearch}
+                      aria-label="Close search"
+                      title="Close"
+                    >
+                      <X size={18} />
+                    </button>
+                  </form>
+                ) : (
+                  <button
+                    className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
+                    aria-label="Search"
+                    title="Search"
+                    onClick={openDesktopSearch}
+                  >
+                    <Search size={20} />
+                  </button>
+                )}
+              </div>
+
               <button
-                key={link.name}
-                onClick={() => handleScroll(link.id)}
-                className="text-base font-semibold text-gray-800 py-3 px-2 hover:bg-blue-50 rounded flex items-center justify-between"
+                className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
+                aria-label="Account"
+                title="Account"
               >
-                {link.name}
-                {link.hasDropdown && <ChevronDown size={16} />}
+                <User size={20} />
               </button>
-            ))}
-          </nav>
+
+              <button className="p-2 text-gray-800 hover:bg-gray-100 rounded transition" aria-label="Wishlist">
+                <Heart size={20} />
+              </button>
+
+              <button className="p-2 text-gray-800 hover:bg-gray-100 rounded transition" aria-label="Cart">
+                <ShoppingBag size={20} />
+              </button>
+            </div>
+          </div>
         </div>
+
+        {/* Mobile Menu (dropdown) */}
+        {isMobileMenuOpen && (
+          <div id="mobile-nav" className="md:hidden bg-white border-t border-gray-200">
+            <div className="container mx-auto px-4 py-4">
+              <nav className="flex flex-col gap-1">
+                {navLinks.map((link) => (
+                  <button
+                    key={link.name}
+                    onClick={() => handleScroll(link.id)}
+                    className="text-base font-semibold text-gray-800 py-3 px-2 hover:bg-blue-50 rounded flex items-center justify-between"
+                  >
+                    {link.name}
+                    {link.hasDropdown && <ChevronDown size={16} />}
+                  </button>
+                ))}
+              </nav>
+
+              <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-2 gap-2">
+                <button
+                  className="py-3 px-3 rounded-lg border border-gray-200 text-gray-800 font-semibold hover:bg-gray-50 flex items-center justify-center gap-2"
+                  aria-label="Account"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <User size={18} />
+                  Account
+                </button>
+
+                <button
+                  className="py-3 px-3 rounded-lg border border-gray-200 text-gray-800 font-semibold hover:bg-gray-50 flex items-center justify-center gap-2"
+                  aria-label="Wishlist"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Heart size={18} />
+                  Wishlist
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile Search Overlay */}
+        {isMobileSearchOpen && (
+          <div className="fixed inset-0 z-[60]">
+            <button
+              type="button"
+              aria-label="Close search"
+              className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+              onClick={closeMobileSearch}
+            />
+
+            <div className="relative mx-auto mt-20 w-[min(92vw,720px)] rounded-2xl bg-white shadow-xl border border-gray-200">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                <div className="font-semibold text-gray-900 font-montserrat">Search</div>
+                <button
+                  type="button"
+                  className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
+                  aria-label="Close"
+                  onClick={closeMobileSearch}
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={submitSearch} className="p-4">
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <Search size={18} />
+                  </span>
+                  <input
+                    ref={searchInputRef}
+                    type="search"
+                    placeholder="Search products or categories..."
+                    value={searchValue}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="w-full h-11 pl-10 pr-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    autoFocus
+                  />
+                </div>
+
+                <div className="mt-4 max-h-[55vh] overflow-auto">
+                  {!searchText ? (
+                    <div className="text-sm text-gray-500 font-montserrat">Start typing to see results.</div>
+                  ) : mobileProductResults.length === 0 && mobileCategoryResults.length === 0 ? (
+                    <div className="text-sm text-gray-500 font-montserrat">No results for “{searchValue}”.</div>
+                  ) : (
+                    <div className="space-y-4">
+                      {mobileProductResults.length > 0 && (
+                        <div>
+                          <div className="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-2">
+                            Products
+                          </div>
+                          <div className="space-y-1">
+                            {mobileProductResults.map((p) => (
+                              <button
+                                key={p.id}
+                                type="button"
+                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50"
+                                onClick={() => {
+                                  closeMobileSearch();
+                                  goToSection("products");
+                                }}
+                              >
+                                <div className="font-semibold text-gray-900">{p.name}</div>
+                                <div className="text-sm text-gray-500">{p.category}</div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {mobileCategoryResults.length > 0 && (
+                        <div>
+                          <div className="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-2">
+                            Categories
+                          </div>
+                          <div className="space-y-1">
+                            {mobileCategoryResults.map((c) => (
+                              <button
+                                key={c.id}
+                                type="button"
+                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50"
+                                onClick={() => {
+                                  closeMobileSearch();
+                                  goToSection("categories");
+                                }}
+                              >
+                                <div className="font-semibold text-gray-900">{c.name}</div>
+                                <div className="text-sm text-gray-500">{c.description}</div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );

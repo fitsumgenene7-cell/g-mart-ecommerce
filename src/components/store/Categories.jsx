@@ -5,31 +5,39 @@ const categories = [
         id: "mens",
         name: "Men's",
         description: "Shop the collection",
-        image: "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=600&h=800&fit=crop",
+        image: "https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=600&q=80",
     },
     {
         id: "womens",
         name: "Women's",
         description: "Shop the collection",
-        image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=800&fit=crop",
+        image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80",
     },
     {
         id: "accessories",
         name: "Accessories",
         description: "Shop the collection",
-        image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=600&h=800&fit=crop",
+        image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=600&q=80",
     },
     {
         id: "sale",
         name: "Sale",
         description: "Up to 50% off",
-        image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&h=800&fit=crop",
+        image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=600&q=80",
     },
 ];
 
-const CategoriesSection = () => {
+const CategoriesSection = ({ searchQuery = "" }) => {
+    const query = searchQuery.trim().toLowerCase();
+    const filteredCategories = query
+        ? categories.filter((category) => {
+            const haystack = `${category.name} ${category.description}`.toLowerCase();
+            return haystack.includes(query);
+        })
+        : categories;
+
     return (
-    <section id="categories" className="py-16 lg:py-24 bg-gray-50">
+    <section id="categories" className="scroll-mt-32 py-16 lg:py-24 bg-gray-50">
         <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -42,13 +50,18 @@ const CategoriesSection = () => {
         </div>
 
         {/* Categories Grid */}
+        {filteredCategories.length === 0 ? (
+            <div className="text-center text-gray-500 font-montserrat">
+                No categories found for “{searchQuery}”.
+            </div>
+        ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-            {categories.map((category, index) => (
+            {filteredCategories.map((category, index) => (
             <a
                 key={category.id}
                 href={`#${category.id}`}
                 className="group relative aspect-[3/4] rounded-lg overflow-hidden shadow-md"
-              style={{ animationDelay: `${index * 0.1}s` }}
+                style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Image */}
                 <img
@@ -73,6 +86,7 @@ const CategoriesSection = () => {
             </a>
             ))}
             </div>
+        )}
         </div>
     </section>
     );

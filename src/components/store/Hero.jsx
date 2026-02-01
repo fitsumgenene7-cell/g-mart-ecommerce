@@ -1,6 +1,14 @@
 import heroImage from "../../assets/hero.jpeg";
 // import "components/common/Button.jsx"
 const HeroSection = () => {
+  const handleExploreCategories = (e) => {
+    e.preventDefault();
+    const section = document.getElementById("categories");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <section className="w-full m-0 p-0">
       <div
@@ -42,14 +50,13 @@ const HeroSection = () => {
                 SHOP NOW
               </a>
               <a
-                href="/categories"
+                href="#categories"
+                onClick={handleExploreCategories}
                 className="border-2 border-white text-white px-8 py-4 rounded-xl font-medium text-lg hover:bg-white hover:text-black transition-all duration-300 hover:scale-105 w-full sm:w-auto text-center"
               >
                 EXPLORE CATEGORIES
               </a>
             </div>
-            
-          
             
           </div>
         </div>
