@@ -1,6 +1,14 @@
 import heroImage from "../../assets/hero.jpeg";
 // import "components/common/Button.jsx"
 const HeroSection = () => {
+  const handleShopNow = (e) => {
+    e.preventDefault();
+    const section = document.getElementById("products");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   const handleExploreCategories = (e) => {
     e.preventDefault();
     const section = document.getElementById("categories");
@@ -40,15 +48,16 @@ const HeroSection = () => {
             {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-6">
               <a
-                href="/shop"
-                className="bg-blue-700 hover:bg-blue-600 text-white px-8 py-4 rounded-xl font-medium text-lg transition-all duration-300 hover:scale-105 w-full sm:w-auto text-center"
+                href="#products"
+                onClick={handleShopNow}
+                className="bg-blue-700 hover:bg-blue-600 text-white px-8 py-4 rounded-xl font-medium text-lg transition-all duration-300 hover:scale-105 w-[min(92vw,420px)] mx-auto sm:w-auto sm:mx-0 text-center"
               >
                 SHOP NOW
               </a>
               <a
                 href="#categories"
                 onClick={handleExploreCategories}
-                className="border-2 border-white text-white px-8 py-4 rounded-xl font-medium text-lg hover:bg-white hover:text-black transition-all duration-300 hover:scale-105 w-full sm:w-auto text-center"
+                className="border-2 border-white text-white px-8 py-4 rounded-xl font-medium text-lg hover:bg-white hover:text-black transition-all duration-300 hover:scale-105 w-[min(92vw,420px)] mx-auto sm:w-auto sm:mx-0 text-center"
               >
                 EXPLORE CATEGORIES
               </a>

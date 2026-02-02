@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Search, User, Heart, ShoppingBag, Menu, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useCart } from "@/context/CartContext";
 
 const CATEGORIES_FOR_SEARCH = [
   { id: "categories", name: "Categories", description: "Browse all categories" },
@@ -26,11 +27,18 @@ const navLinks = [
 ];
 
 const Header = ({ searchQuery = "", onSearch }) => {
+  const { setIsCartOpen, totalItems } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDesktopSearchOpen, setIsDesktopSearchOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState(searchQuery);
   const searchInputRef = useRef(null);
+
+  const openCart = () => {
+    setIsMobileMenuOpen(false);
+    setIsMobileSearchOpen(false);
+    setIsCartOpen(true);
+  };
 
   // Smooth scroll function
   const handleScroll = (id) => {
@@ -64,10 +72,11 @@ const Header = ({ searchQuery = "", onSearch }) => {
     e.preventDefault();
     if (typeof onSearch === "function") onSearch(searchValue);
 
+    // On desktop, keep results in the header (no auto-scroll).
+    // On mobile search overlay, keep the old behavior of jumping to products.
+    if (!isMobileSearchOpen) return;
     const productsSection = document.getElementById("products");
-    if (productsSection) {
-      productsSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    if (productsSection) productsSection.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   useEffect(() => {
@@ -101,7 +110,7 @@ const Header = ({ searchQuery = "", onSearch }) => {
 
   const searchText = searchValue.trim().toLowerCase();
 
-  const mobileProductResults = useMemo(() => {
+  const productResults = useMemo(() => {
     if (!searchText) return [];
     return PRODUCTS_FOR_SEARCH.filter((p) => {
       const haystack = `${p.name} ${p.category}`.toLowerCase();
@@ -109,7 +118,7 @@ const Header = ({ searchQuery = "", onSearch }) => {
     }).slice(0, 6);
   }, [searchText]);
 
-  const mobileCategoryResults = useMemo(() => {
+  const categoryResults = useMemo(() => {
     if (!searchText) return [];
     return CATEGORIES_FOR_SEARCH.filter((c) => {
       const haystack = `${c.name} ${c.description}`.toLowerCase();
@@ -161,42 +170,16 @@ const Header = ({ searchQuery = "", onSearch }) => {
                   showClose
                   overlayClassName="z-[70] bg-black/20 backdrop-blur-md data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0"
                   className={
-                    "z-[71] left-0 right-0 top-0 max-w-none translate-x-0 translate-y-0 " +
-                    "rounded-none border-0 bg-white/80 p-0 shadow-[0_30px_80px_rgba(0,0,0,0.12)] " +
+                    "z-[71] top-6 w-[min(92vw,720px)] max-w-none translate-y-0 " +
+                    "rounded-3xl border border-black/5 bg-white/80 p-0 shadow-[0_30px_80px_rgba(0,0,0,0.12)] " +
                     "backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 " +
                     "data-[state=open]:animate-in data-[state=closed]:animate-out " +
                     "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 " +
                     "data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2"
                   }
                 >
-                  <div className="px-4 pt-5 pb-4 border-b border-black/5">
-                    <div className="text-sm font-semibold tracking-tight text-gray-900 font-montserrat">
-                      Menu
-                    </div>
-                    <div className="text-xs text-gray-500 mt-0.5 font-montserrat">
-                      Simple navigation
-                    </div>
-                  </div>
-
-                  <div className="px-4 py-4">
-                    <nav className="flex flex-col rounded-2xl bg-white/60 ring-1 ring-black/5 overflow-hidden">
-                      {navLinks.map((link) => (
-                        <button
-                          key={link.name}
-                          onClick={() => handleScroll(link.id)}
-                          className={
-                            "w-full text-left text-base font-semibold text-gray-900 " +
-                            "px-4 py-4 flex items-center justify-between " +
-                            "hover:bg-black/[0.04] active:bg-black/[0.06] transition"
-                          }
-                        >
-                          <span>{link.name}</span>
-                          {link.hasDropdown && <ChevronDown size={16} className="text-gray-500" />}
-                        </button>
-                      ))}
-                    </nav>
-
-                    <div className="mt-4 grid grid-cols-2 gap-2">
+                  <div className="px-4 pt-12 pb-4">
+                    <div className="grid grid-cols-2 gap-2">
                       <button
                         className={
                           "py-3.5 px-3 rounded-2xl ring-1 ring-black/5 bg-white/60 " +
@@ -249,10 +232,17 @@ const Header = ({ searchQuery = "", onSearch }) => {
                 className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
                 aria-label="Cart"
                 onClick={() => {
-                  // TODO: open cart UI (drawer)
+                  openCart();
                 }}
               >
-                <ShoppingBag size={22} />
+                <span className="relative inline-flex">
+                  <ShoppingBag size={22} />
+                  {totalItems > 0 ? (
+                    <span className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-black text-white text-[10px] leading-4 text-center">
+                      {totalItems}
+                    </span>
+                  ) : null}
+                </span>
               </button>
             </div>
           </div>
@@ -298,6 +288,71 @@ const Header = ({ searchQuery = "", onSearch }) => {
                         className="w-56 lg:w-72 h-10 pl-10 pr-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         autoFocus
                       />
+
+                      {/* Desktop results dropdown (keeps results at the top) */}
+                      {searchText ? (
+                        <div className="absolute right-0 top-full mt-2 w-full overflow-hidden rounded-2xl border border-gray-200 bg-white/90 shadow-xl backdrop-blur-md">
+                          <div className="max-h-[60vh] overflow-auto p-2">
+                            {productResults.length === 0 && categoryResults.length === 0 ? (
+                              <div className="px-3 py-3 text-sm text-gray-500 font-montserrat">
+                                No results for “{searchValue}”.
+                              </div>
+                            ) : (
+                              <div className="space-y-3">
+                                {productResults.length > 0 && (
+                                  <div>
+                                    <div className="px-3 py-1 text-[11px] uppercase tracking-wide text-gray-400 font-semibold">
+                                      Products
+                                    </div>
+                                    <div className="mt-1 space-y-1">
+                                      {productResults.map((p) => (
+                                        <button
+                                          key={p.id}
+                                          type="button"
+                                          className="w-full text-left rounded-xl px-3 py-2 hover:bg-black/[0.04] active:bg-black/[0.06] transition"
+                                          onClick={() => {
+                                            setQuery(p.name);
+                                            closeDesktopSearch();
+                                            goToSection("products");
+                                          }}
+                                        >
+                                          <div className="font-semibold text-gray-900">{p.name}</div>
+                                          <div className="text-sm text-gray-500">{p.category}</div>
+                                        </button>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {categoryResults.length > 0 && (
+                                  <div>
+                                    <div className="px-3 py-1 text-[11px] uppercase tracking-wide text-gray-400 font-semibold">
+                                      Categories
+                                    </div>
+                                    <div className="mt-1 space-y-1">
+                                      {categoryResults.map((c) => (
+                                        <button
+                                          key={c.id}
+                                          type="button"
+                                          className="w-full text-left rounded-xl px-3 py-2 hover:bg-black/[0.04] active:bg-black/[0.06] transition"
+                                          onClick={() => {
+                                            setQuery(c.name);
+                                            closeDesktopSearch();
+                                            goToSection("categories");
+                                          }}
+                                        >
+                                          <div className="font-semibold text-gray-900">{c.name}</div>
+                                          <div className="text-sm text-gray-500">{c.description}</div>
+                                        </button>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : null}
                     </div>
 
                     <button
@@ -334,8 +389,19 @@ const Header = ({ searchQuery = "", onSearch }) => {
                 <Heart size={20} />
               </button>
 
-              <button className="p-2 text-gray-800 hover:bg-gray-100 rounded transition" aria-label="Cart">
-                <ShoppingBag size={20} />
+              <button
+                className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
+                aria-label="Cart"
+                onClick={openCart}
+              >
+                <span className="relative inline-flex">
+                  <ShoppingBag size={20} />
+                  {totalItems > 0 ? (
+                    <span className="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-black text-white text-[10px] leading-4 text-center">
+                      {totalItems}
+                    </span>
+                  ) : null}
+                </span>
               </button>
             </div>
           </div>
@@ -385,17 +451,17 @@ const Header = ({ searchQuery = "", onSearch }) => {
                 <div className="mt-4 max-h-[55vh] overflow-auto">
                   {!searchText ? (
                     <div className="text-sm text-gray-500 font-montserrat">Start typing to see results.</div>
-                  ) : mobileProductResults.length === 0 && mobileCategoryResults.length === 0 ? (
+                  ) : productResults.length === 0 && categoryResults.length === 0 ? (
                     <div className="text-sm text-gray-500 font-montserrat">No results for “{searchValue}”.</div>
                   ) : (
                     <div className="space-y-4">
-                      {mobileProductResults.length > 0 && (
+                      {productResults.length > 0 && (
                         <div>
                           <div className="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-2">
                             Products
                           </div>
                           <div className="space-y-1">
-                            {mobileProductResults.map((p) => (
+                            {productResults.map((p) => (
                               <button
                                 key={p.id}
                                 type="button"
@@ -413,13 +479,13 @@ const Header = ({ searchQuery = "", onSearch }) => {
                         </div>
                       )}
 
-                      {mobileCategoryResults.length > 0 && (
+                      {categoryResults.length > 0 && (
                         <div>
                           <div className="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-2">
                             Categories
                           </div>
                           <div className="space-y-1">
-                            {mobileCategoryResults.map((c) => (
+                            {categoryResults.map((c) => (
                               <button
                                 key={c.id}
                                 type="button"
