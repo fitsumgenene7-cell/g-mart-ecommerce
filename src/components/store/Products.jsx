@@ -34,9 +34,9 @@ const products = [
 const fallbackImage = `data:image/svg+xml,${encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
         <rect width="800" height="800" fill="#f3f4f6"/>
-        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="28">
-        Image unavailable
-      </text>
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="28">
+                Image unavailable
+            </text>
     </svg>`
 )}`;
 

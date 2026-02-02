@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Search, User, Heart, ShoppingBag, Menu, X } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const CATEGORIES_FOR_SEARCH = [
   { id: "categories", name: "Categories", description: "Browse all categories" },
@@ -139,19 +140,92 @@ const Header = ({ searchQuery = "", onSearch }) => {
         <div className="md:hidden">
           <div className="container mx-auto px-4 h-16 grid grid-cols-3 items-center">
             <div className="flex items-center justify-start">
-              <button
-                type="button"
-                className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
-                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-                aria-expanded={isMobileMenuOpen}
-                aria-controls="mobile-nav"
-                onClick={() => {
-                  setIsMobileSearchOpen(false);
-                  setIsMobileMenuOpen((open) => !open);
+              <Dialog
+                open={isMobileMenuOpen}
+                onOpenChange={(open) => {
+                  setIsMobileMenuOpen(open);
+                  if (open) setIsMobileSearchOpen(false);
                 }}
               >
-                {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-              </button>
+                <DialogTrigger asChild>
+                  <button
+                    type="button"
+                    className="p-2 text-gray-800 hover:bg-gray-100 rounded transition"
+                    aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                  >
+                    {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                  </button>
+                </DialogTrigger>
+
+                <DialogContent
+                  showClose
+                  overlayClassName="z-[70] bg-black/20 backdrop-blur-md data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0"
+                  className={
+                    "z-[71] left-0 right-0 top-0 max-w-none translate-x-0 translate-y-0 " +
+                    "rounded-none border-0 bg-white/80 p-0 shadow-[0_30px_80px_rgba(0,0,0,0.12)] " +
+                    "backdrop-blur-xl supports-[backdrop-filter]:bg-white/70 " +
+                    "data-[state=open]:animate-in data-[state=closed]:animate-out " +
+                    "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 " +
+                    "data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2"
+                  }
+                >
+                  <div className="px-4 pt-5 pb-4 border-b border-black/5">
+                    <div className="text-sm font-semibold tracking-tight text-gray-900 font-montserrat">
+                      Menu
+                    </div>
+                    <div className="text-xs text-gray-500 mt-0.5 font-montserrat">
+                      Simple navigation
+                    </div>
+                  </div>
+
+                  <div className="px-4 py-4">
+                    <nav className="flex flex-col rounded-2xl bg-white/60 ring-1 ring-black/5 overflow-hidden">
+                      {navLinks.map((link) => (
+                        <button
+                          key={link.name}
+                          onClick={() => handleScroll(link.id)}
+                          className={
+                            "w-full text-left text-base font-semibold text-gray-900 " +
+                            "px-4 py-4 flex items-center justify-between " +
+                            "hover:bg-black/[0.04] active:bg-black/[0.06] transition"
+                          }
+                        >
+                          <span>{link.name}</span>
+                          {link.hasDropdown && <ChevronDown size={16} className="text-gray-500" />}
+                        </button>
+                      ))}
+                    </nav>
+
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      <button
+                        className={
+                          "py-3.5 px-3 rounded-2xl ring-1 ring-black/5 bg-white/60 " +
+                          "text-gray-900 font-semibold hover:bg-black/[0.04] active:bg-black/[0.06] " +
+                          "flex items-center justify-center gap-2 transition"
+                        }
+                        aria-label="Account"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <User size={18} className="text-gray-700" />
+                        Account
+                      </button>
+
+                      <button
+                        className={
+                          "py-3.5 px-3 rounded-2xl ring-1 ring-black/5 bg-white/60 " +
+                          "text-gray-900 font-semibold hover:bg-black/[0.04] active:bg-black/[0.06] " +
+                          "flex items-center justify-center gap-2 transition"
+                        }
+                        aria-label="Wishlist"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <Heart size={18} className="text-gray-700" />
+                        Wishlist
+                      </button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="flex items-center justify-center">
@@ -267,45 +341,7 @@ const Header = ({ searchQuery = "", onSearch }) => {
           </div>
         </div>
 
-        {/* Mobile Menu (dropdown) */}
-        {isMobileMenuOpen && (
-          <div id="mobile-nav" className="md:hidden bg-white border-t border-gray-200">
-            <div className="container mx-auto px-4 py-4">
-              <nav className="flex flex-col gap-1">
-                {navLinks.map((link) => (
-                  <button
-                    key={link.name}
-                    onClick={() => handleScroll(link.id)}
-                    className="text-base font-semibold text-gray-800 py-3 px-2 hover:bg-blue-50 rounded flex items-center justify-between"
-                  >
-                    {link.name}
-                    {link.hasDropdown && <ChevronDown size={16} />}
-                  </button>
-                ))}
-              </nav>
-
-              <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-2 gap-2">
-                <button
-                  className="py-3 px-3 rounded-lg border border-gray-200 text-gray-800 font-semibold hover:bg-gray-50 flex items-center justify-center gap-2"
-                  aria-label="Account"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <User size={18} />
-                  Account
-                </button>
-
-                <button
-                  className="py-3 px-3 rounded-lg border border-gray-200 text-gray-800 font-semibold hover:bg-gray-50 flex items-center justify-center gap-2"
-                  aria-label="Wishlist"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <Heart size={18} />
-                  Wishlist
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Mobile Menu now uses Dialog (top sheet) */}
 
         {/* Mobile Search Overlay */}
         {isMobileSearchOpen && (
@@ -407,6 +443,7 @@ const Header = ({ searchQuery = "", onSearch }) => {
             </div>
           </div>
         )}
+
       </div>
     </header>
   );
