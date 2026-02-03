@@ -26,8 +26,8 @@ const HeroSection = () => {
           backgroundPosition: "center",
         }}
       >
-        {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/25"></div>
+        {/* Gradient overlay: darker on the left, brighter to the right */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-transparent" />
 
         {/* Main content container */}
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">

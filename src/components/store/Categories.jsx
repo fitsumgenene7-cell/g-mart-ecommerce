@@ -37,8 +37,8 @@ const CategoriesSection = ({ searchQuery = "" }) => {
         : categories;
 
     return (
-    <section id="categories" className="scroll-mt-32 py-16 lg:py-24 bg-gray-50">
-        <div className="container mx-auto px-4">
+    <section id="categories" className="scroll-mt-32 py-16 lg:py-24">
+        <div className="container mx-auto px-4 mt-16">
         <div className="mx-auto w-full max-w-6xl">
             {/* Section Header */}
             <div className="text-center mb-12">
