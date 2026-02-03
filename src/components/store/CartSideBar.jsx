@@ -36,8 +36,8 @@ const startShopping = () => {
       {/* Backdrop */}
         <div
             className={cn(
-                        // On mobile the cart is full-screen, so the backdrop isn't needed.
-                        "hidden sm:block fixed inset-0 bg-black/40 backdrop-blur-sm z-[80] transition-opacity",
+                    // On mobile the cart is full-screen, so the backdrop isn't needed.
+                    "hidden sm:block fixed inset-0 bg-black/40 backdrop-blur-sm z-[80] transition-opacity",
             isCartOpen ? "opacity-100" : "opacity-0 pointer-events-none"
             )}
             onClick={() => setIsCartOpen(false)}
