@@ -2,14 +2,15 @@
   "name": "g-mart-workspace",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "backend",
+    "frontend"
   ],
   "scripts": {
-    "dev": "npm --workspace apps/web run dev",
-    "dev:web": "npm --workspace apps/web run dev",
-    "dev:api": "npm --workspace apps/api run dev",
-    "build": "npm --workspace apps/web run build",
-    "preview": "npm --workspace apps/web run preview",
-    "lint": "npm --workspace apps/web run lint"
+    "dev": "npm --workspace frontend run dev",
+    "dev:web": "npm --workspace frontend run dev",
+    "dev:api": "npm --workspace backend run dev",
+    "build": "npm --workspace frontend run build",
+    "preview": "npm --workspace frontend run preview",
+    "lint": "npm --workspace frontend run lint"
   }
 }
