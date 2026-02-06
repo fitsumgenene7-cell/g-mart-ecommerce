@@ -3,6 +3,8 @@ import cors from 'cors'
 import 'dotenv/config'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { apiV1 } from './routes/apiV1.js'
+import { getMongoStatus } from './db/mongo.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -18,8 +20,10 @@ app.use(
 )
     app.use(express.json())
 
+    app.use('/api/v1', apiV1)
+
     app.get('/health', (_req, res) => {
-        res.json({ ok: true })
+        res.json({ ok: true, mongo: getMongoStatus() })
     })
 
     const shouldServeFrontend =
@@ -38,6 +42,17 @@ app.use(
             res.sendFile(path.join(frontendDistPath, 'index.html'))
         })
     }
+
+    app.use((req, res) => {
+        res.status(404).json({ ok: false, error: 'Not found' })
+    })
+
+    // eslint-disable-next-line no-unused-vars
+    app.use((err, _req, res, _next) => {
+        // eslint-disable-next-line no-console
+        console.error(err)
+        res.status(500).json({ ok: false, error: 'Internal server error' })
+    })
 
     return app
 }

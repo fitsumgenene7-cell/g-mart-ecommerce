@@ -1,8 +1,26 @@
 import { createServer } from './server.js'
+import { connectMongo } from './db/mongo.js'
 
 const port = Number(process.env.PORT ?? 4000)
 
 const app = createServer()
+
+try {
+  await connectMongo()
+  if (process.env.MONGO_URI) {
+    // eslint-disable-next-line no-console
+    console.log('MongoDB connected')
+  } else {
+    // eslint-disable-next-line no-console
+    console.log('MongoDB disabled (set MONGO_URI to enable)')
+  }
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.error('MongoDB connection failed')
+  // eslint-disable-next-line no-console
+  console.error(err)
+  process.exit(1)
+}
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
