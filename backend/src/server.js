@@ -12,12 +12,12 @@ const __dirname = path.dirname(__filename)
 export function createServer() {
     const app = express()
 
-app.use(
-    cors({
-        origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
-        credentials: true,
-    }),
-)
+    app.use(
+        cors({
+            origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+            credentials: true,
+        }),
+    )
     app.use(express.json())
 
     app.use('/api/v1', apiV1)
