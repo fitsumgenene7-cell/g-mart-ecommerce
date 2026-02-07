@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import 'dotenv/config'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -18,6 +19,7 @@ export function createServer() {
             credentials: true,
         }),
     )
+    app.use(cookieParser())
     app.use(express.json())
 
     app.use('/api/v1', apiV1)
